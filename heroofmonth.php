@@ -86,12 +86,12 @@ class HeroOfMonth extends Module
     {
         $this->context->controller->registerStylesheet(
             'heroofmonth-css',
-            'modules/'. $this->name .'/views/css/heroofmonth.css',
+            'modules/' . $this->name . '/views/css/heroofmonth.css',
             ['media' => 'all', 'priority' => 1000]
         );
         $this->context->controller->registerJavascript(
             'heroofmonth-js',
-            'modules/'. $this->name. '/views/js/heroofmonth.js',
+            'modules/' . $this->name . '/views/js/heroofmonth.js',
             ['priority' => 1000]
         );
     }
@@ -104,15 +104,15 @@ class HeroOfMonth extends Module
         }
         $product = new Product($heroProductId, true, $this->context->language->id);
         $cover = Product::getCover($heroProductId);
-        $product->id_image = $cover ? $product->id. '-' .$cover['id_image'] : null;
+        $product->id_image = $cover ? $product->id . '-' . $cover['id_image'] : null;
         $heroData = Db::getInstance()->getRow(
-            'SELECT * FROM '. _DB_PREFIX_ .'heroofmonth WHERE id_product = '. (int) $heroProductId
+            'SELECT * FROM ' . _DB_PREFIX_ . 'heroofmonth WHERE id_product = ' . (int) $heroProductId
         );
         $useShortDescription = !empty($heroData['use_short_description']);
         $customDescription = $heroData['description'] ?? 'no';
         $customImage = $heroData['image'] ?? null;
         $customImageUrl = $customImage
-            ? $this->context->link->getBaseLink(). 'modules/'.$this->name. '/views/img/' .$customImage
+            ? $this->context->link->getBaseLink() . 'modules/' . $this->name . '/views/img/' . $customImage
             : null;
         $this->context->smarty->assign([
             'hero_product_id' => $heroProductId,
@@ -133,13 +133,13 @@ class HeroOfMonth extends Module
         if (empty($flagImage)) {
             return '';
         }
-        $flagImagePath = _PS_MODULE_DIR_. $this->name .'/views/img/'. $flagImage;
+        $flagImagePath = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $flagImage;
         if (
             isset($params['product']['id_product'])
             && $params['product']['id_product'] === $heroProductId
             && file_exists($flagImagePath)
         ) {
-            $flagImageUrl = $this->context->link->getBaseLink().'modules/'. $this->name .'/views/img/'. $flagImage;
+            $flagImageUrl = $this->context->link->getBaseLink() . 'modules/' . $this->name . '/views/img/' . $flagImage;
             $this->context->smarty->assign('flag_image_url', $flagImageUrl);
 
             return $this->display(__FILE__, 'views/templates/hook/heroofmonth_flag.tpl');
@@ -150,7 +150,7 @@ class HeroOfMonth extends Module
 
     private function createTable()
     {
-        $sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'heroofmonth` (
+        $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'heroofmonth` (
             `id_hero` int(11) NOT NULL AUTO_INCREMENT,
             `id_product` int(11) NOT NULL,
             `name` varchar(255) NOT NULL,
@@ -160,7 +160,7 @@ class HeroOfMonth extends Module
             `use_short_description` TINYINT(1) NOT NULL DEFAULT 0,
             `active` TINYINT(1) NOT NULL DEFAULT 1,
             PRIMARY KEY (`id_hero`)
-        ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         return Db::getInstance()->execute($sql);
     }
@@ -174,9 +174,9 @@ class HeroOfMonth extends Module
         if (isset($_FILES['HERO_FLAG_IMAGE']) && !empty($_FILES['HERO_FLAG_IMAGE']['tmp_name'])) {
             $output .= $this->handleFlagImageUpload();
         }
-        $this->context->controller->addJS($this->_path.'views/js/heroofmonth.js');
-        $this->context->controller->addCSS($this->_path.'views/css/heroofmonth.css');
-        $output .= '<a href="'.$this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&action=layoutSettings&token='.Tools::getAdminTokenLite('AdminModules').'" class="btn btn-primary" style="margin-bottom: 20px;">'.$this->l('Configuration du produit du mois').'</a>';
+        $this->context->controller->addJS($this->_path . 'views/js/heroofmonth.js');
+        $this->context->controller->addCSS($this->_path . 'views/css/heroofmonth.css');
+        $output .= '<a href="' . $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&action=layoutSettings&token=' . Tools::getAdminTokenLite('AdminModules') . '" class="btn btn-primary" style="margin-bottom: 20px;">' . $this->l('Configuration du produit du mois') . '</a>';
         if ('layoutSettings' === Tools::getValue('action')) {
             return $this->renderLayoutSettingsForm();
         }
@@ -219,7 +219,7 @@ class HeroOfMonth extends Module
                         'type' => 'html',
                         'label' => $this->l('Recherche Produit (ID, Nom, Référence)'),
                         'name' => 'product_search_html',
-                        'html_content' => $this->context->smarty->fetch($this->local_path.'views/templates/admin/product_search.tpl'),
+                        'html_content' => $this->context->smarty->fetch($this->local_path . 'views/templates/admin/product_search.tpl'),
                     ],
                     ['type' => 'hidden', 'name' => 'HERO_OF_THE_MONTH', 'id' => 'HERO_OF_THE_MONTH'],
                     [
@@ -257,7 +257,7 @@ class HeroOfMonth extends Module
         $helper->name_controller = $this->name;
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitHeroOfMonth';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure='.$this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = [
             'fields_value' => [
@@ -275,7 +275,7 @@ class HeroOfMonth extends Module
     public function renderEditForm($hero)
     {
         $this->context->smarty->assign('hero_name', $hero['name']);
-        $html_content = $this->context->smarty->fetch($this->local_path.'views/templates/admin/edit_product_search.tpl');
+        $html_content = $this->context->smarty->fetch($this->local_path . 'views/templates/admin/edit_product_search.tpl');
         $fields_form = [
             'form' => [
                 'legend' => [
@@ -343,11 +343,11 @@ class HeroOfMonth extends Module
         ];
 
         if (!empty($hero['image'])) {
-            $image_path = _PS_MODULE_DIR_.$this->name.'/views/img/'.$hero['image'];
-            $image_url = $this->context->link->getBaseLink().'modules/'.$this->name.'/views/img/'.$hero['image'];
+            $image_path = _PS_MODULE_DIR_ . $this->name.'/views/img/' . $hero['image'];
+            $image_url = $this->context->link->getBaseLink() . 'modules/'.$this->name.'/views/img/' . $hero['image'];
 
             if (file_exists($image_path)) {
-                $delete_image_url = $this->context->link->getAdminLink('AdminModules', true).'&configure='.$this->name.'&delete_hero_image=1&id_hero='.(int) $hero['id_hero'];
+                $delete_image_url = $this->context->link->getAdminLink('AdminModules', true) . '&configure='.$this->name . '&delete_hero_image=1&id_hero=' . (int) $hero['id_hero'];
                 $delete_image_text = $this->l('Delete the image.');
 
                 $this->context->smarty->assign([
@@ -360,7 +360,7 @@ class HeroOfMonth extends Module
                     'type' => 'html',
                     'label' => $this->l('Image actuelle'),
                     'name' => 'current_image',
-                    'html_content' => $this->context->smarty->fetch($this->local_path.'views/templates/admin/current_image.tpl'),
+                    'html_content' => $this->context->smarty->fetch($this->local_path . 'views/templates/admin/current_image.tpl'),
                 ];
             }
         }
@@ -370,7 +370,7 @@ class HeroOfMonth extends Module
                 'type' => 'button',
                 'title' => $this->l('Retour'),
                 'class' => 'btn btn-secondary',
-                'href' => $this->context->link->getAdminLink('AdminModules').'&configure='.$this->name,
+                'href' => $this->context->link->getAdminLink('AdminModules') . '&configure=' . $this->name,
             ],
             [
                 'type' => 'submit',
@@ -384,7 +384,7 @@ class HeroOfMonth extends Module
         $helper->name_controller = $this->name;
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitEditHeroOfMonth';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = [
             'fields_value' => [
@@ -402,7 +402,7 @@ class HeroOfMonth extends Module
 
     protected function renderHeroList()
     {
-        $heroes = Db::getInstance()->executeS('SELECT * FROM '._DB_PREFIX_.'heroofmonth');
+        $heroes = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'heroofmonth');
         $fields_list = [
             'id_hero' => ['title' => $this->l('ID'), 'align' => 'center', 'class' => 'fixed-width-xs'],
             'id_product' => ['title' => $this->l('ID Produit'), 'align' => 'center', 'class' => 'fixed-width-xs'],
@@ -419,7 +419,7 @@ class HeroOfMonth extends Module
         $helper->title = $this->l('Produits Héros du Mois');
         $helper->table = $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
+        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
 
         return $helper->generateList($heroes, $fields_list);
     }
@@ -427,8 +427,8 @@ class HeroOfMonth extends Module
     protected function renderLayoutSettingsForm()
     {
         $flag_image = Configuration::get('HERO_FLAG_IMAGE');
-        $image_path = _PS_MODULE_DIR_.$this->name.'/views/img/'.$flag_image;
-        $image_url = $this->context->link->getBaseLink().'modules/'.$this->name.'/views/img/'.$flag_image;
+        $image_path = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $flag_image;
+        $image_url = $this->context->link->getBaseLink() . 'modules/' . $this->name.'/views/img/' . $flag_image;
         $inputs = [
             [
                 'type' => 'file',
@@ -463,8 +463,8 @@ class HeroOfMonth extends Module
             ],
         ];
         if (!empty($flag_image) && file_exists($image_path)) {
-            $flag_image_url = $this->context->link->getBaseLink().'modules/'.$this->name.'/views/img/'.$flag_image;
-            $delete_flag_image_url = $this->context->link->getAdminLink('AdminModules', true).'&delete_flag_image=1&configure='.$this->name;
+            $flag_image_url = $this->context->link->getBaseLink() . 'modules/' . $this->name . '/views/img/' . $flag_image;
+            $delete_flag_image_url = $this->context->link->getAdminLink('AdminModules', true) . '&delete_flag_image=1&configure=' . $this->name;
             $delete_flag_image_text = $this->l('Supprimer l\'image');
 
             $this->context->smarty->assign([
@@ -477,7 +477,7 @@ class HeroOfMonth extends Module
                 'type' => 'html',
                 'label' => $this->l('Image actuelle'),
                 'name' => 'current_image',
-                'html_content' => $this->context->smarty->fetch($this->local_path.'views/templates/admin/flag_image.tpl'),
+                'html_content' => $this->context->smarty->fetch($this->local_path . 'views/templates/admin/flag_image.tpl'),
             ]);
         }
 
@@ -493,7 +493,7 @@ class HeroOfMonth extends Module
                         'type' => 'button',
                         'title' => $this->l('Retour'),
                         'class' => 'btn btn-secondary',
-                        'href' => $this->context->link->getAdminLink('AdminModules').'&configure='.$this->name,
+                        'href' => $this->context->link->getAdminLink('AdminModules') . '&configure=' . $this->name,
                     ],
                     [
                         'type' => 'submit',
@@ -508,7 +508,7 @@ class HeroOfMonth extends Module
         $helper->name_controller = $this->name;
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitLayoutSettings';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = [
             'fields_value' => [
@@ -526,7 +526,7 @@ class HeroOfMonth extends Module
 
     public function getHeroById($id_hero)
     {
-        return Db::getInstance()->getRow('SELECT * FROM '._DB_PREFIX_.'heroofmonth WHERE id_hero = '.(int) $id_hero);
+        return Db::getInstance()->getRow('SELECT * FROM ' . _DB_PREFIX_ . 'heroofmonth WHERE id_hero = ' . (int) $id_hero);
     }
 
     public function processEditHero()
@@ -563,8 +563,8 @@ class HeroOfMonth extends Module
         $sql->select('p.id_product, pl.name, p.reference');
         $sql->from('product', 'p');
         $sql->innerJoin('product_lang', 'pl', 'p.id_product = pl.id_product');
-        $sql->where('(pl.name LIKE "%'.pSQL($search).'%" OR p.id_product LIKE "'.pSQL($search).'%" OR p.reference LIKE "%'.pSQL($search).'%")');
-        $sql->where('pl.id_lang = '.(int) $this->context->language->id);
+        $sql->where('(pl.name LIKE "%' . pSQL($search) . '%" OR p.id_product LIKE "' . pSQL($search) . '%" OR p.reference LIKE "%' . pSQL($search) . '%")');
+        $sql->where('pl.id_lang = ' . (int) $this->context->language->id);
         $products = Db::getInstance()->executeS($sql);
         exit(json_encode($products));
     }
@@ -584,13 +584,13 @@ class HeroOfMonth extends Module
 
     protected function deleteHero($id_hero)
     {
-        return Db::getInstance()->delete('heroofmonth', 'id_hero = '.(int) $id_hero);
+        return Db::getInstance()->delete('heroofmonth', 'id_hero = ' . (int) $id_hero);
     }
 
     private function handleImageUpload($id_hero, $existing_image)
     {
         if (!empty($existing_image)) {
-            $existing_image_path = _PS_MODULE_DIR_.$this->name.'/views/img/'.$existing_image;
+            $existing_image_path = _PS_MODULE_DIR_ . $this->name.'/views/img/' . $existing_image;
             if (file_exists($existing_image_path)) {
                 unlink($existing_image_path);
             }
@@ -599,10 +599,10 @@ class HeroOfMonth extends Module
         $allowed_mime_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (in_array($file['type'], $allowed_mime_types)) {
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = 'hero_'.(int) $id_hero.'.'.$extension;
-            $destination = _PS_MODULE_DIR_.$this->name.'/views/img/'.$filename;
+            $filename = 'hero_' . (int)$id_hero . '.' . $extension;
+            $destination = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $filename;
             if (move_uploaded_file($file['tmp_name'], $destination)) {
-                Db::getInstance()->update('heroofmonth', ['image' => pSQL($filename)], 'id_hero = '.(int) $id_hero);
+                Db::getInstance()->update('heroofmonth', ['image' => pSQL($filename)], 'id_hero = ' . (int) $id_hero);
             } else {
                 $this->context->controller->errors[] = $this->l('Erreur lors du téléchargement de l\'image.');
             }
@@ -613,15 +613,15 @@ class HeroOfMonth extends Module
 
     private function deactivatePreviousHero($month_year)
     {
-        Db::getInstance()->execute('UPDATE `'._DB_PREFIX_."heroofmonth` SET active = 0 WHERE month = '".pSQL($month_year)."'");
+        Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . "heroofmonth` SET active = 0 WHERE month = '" . pSQL($month_year) . "'");
         Configuration::updateValue('HERO_OF_THE_MONTH', null);
     }
 
     private function addNewHero($product_id, $description, $use_short_description, $month_year)
     {
         $product = new Product($product_id, false, $this->context->language->id);
-        $sql = 'INSERT INTO `'._DB_PREFIX_."heroofmonth` (id_product, name, month, active, description, use_short_description) 
-            VALUES ('".(int) $product_id."', '".pSQL($product->name)."', '".pSQL($month_year)."', 1, '".pSQL($description)."', ".(int) $use_short_description.')';
+        $sql = 'INSERT INTO `' . _DB_PREFIX_ . "heroofmonth` (id_product, name, month, active, description, use_short_description) 
+            VALUES ('" . (int) $product_id . "', '" . pSQL($product->name) . "', '" . pSQL($month_year) . "', 1, '".pSQL($description)."', ".(int) $use_short_description.')';
         Db::getInstance()->execute($sql);
         Configuration::updateValue('HERO_OF_THE_MONTH', $product_id);
     }
