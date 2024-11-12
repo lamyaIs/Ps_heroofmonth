@@ -15,10 +15,12 @@
  * @author     Mr-dev
  * @copyright  Mr-dev
  * @license    License valid for one website (or project) per purchase
-*/
+ */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+
 class HeroOfMonth extends Module
 {
     public function __construct()
@@ -35,6 +37,7 @@ class HeroOfMonth extends Module
         $this->displayName = $this->l('Hero of the Month');
         $this->description = $this->l('Choose a product to highlight each month.');
     }
+    
     public function install()
     {
         return parent::install() &&
@@ -44,6 +47,7 @@ class HeroOfMonth extends Module
             $this->createTable() &&
             $this->initializeConfigurations();
     }
+    
     public function uninstall()
     {
         return parent::uninstall() &&
@@ -51,6 +55,7 @@ class HeroOfMonth extends Module
             $this->deleteTable() &&
             $this->removeTab();
     }
+    
     private function initializeConfigurations()
     {
         Configuration::updateValue('HERO_COLOR1', '#000000');
@@ -62,6 +67,7 @@ class HeroOfMonth extends Module
         Configuration::updateValue('HERO_CUSTOM_IMAGE', '');
         return true;
     }
+    
     private function deleteConfigurations()
     {
         Configuration::deleteByName('HERO_COLOR1');
@@ -73,6 +79,7 @@ class HeroOfMonth extends Module
         Configuration::deleteByName('HERO_CUSTOM_IMAGE');
         return true;
     }
+    
     public function hookActionFrontControllerSetMedia()
     {
         $this->context->controller->registerStylesheet(
@@ -86,6 +93,7 @@ class HeroOfMonth extends Module
             ['priority' => 1000]
         );
     }
+    
     public function hookDisplayHome($params)
     {
         $heroProductId = Configuration::get('HERO_OF_THE_MONTH');
@@ -114,6 +122,7 @@ class HeroOfMonth extends Module
         ]);
         return $this->display(__FILE__, 'views/templates/hook/display_home.tpl');
     }
+    
     public function hookDisplayProductListReviews($params)
     {
         $heroProductId = (int) Configuration::get('HERO_OF_THE_MONTH');
@@ -133,6 +142,7 @@ class HeroOfMonth extends Module
         }
         return '';
     }
+    
     private function createTable()
     {
         $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'heroofmonth` (
@@ -148,6 +158,7 @@ class HeroOfMonth extends Module
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
         return Db::getInstance()->execute($sql);
     }
+    
     public function getContent()
     {
         $output = '';
@@ -186,6 +197,7 @@ class HeroOfMonth extends Module
         }
         return $output . $this->renderForm() . $this->renderHeroList();
     }
+    
     protected function renderForm()
     {
         $use_short_description = (bool) Tools::getValue('switch_description_short', 0);
@@ -251,6 +263,7 @@ class HeroOfMonth extends Module
         ];
         return $helper->generateForm([$fields_form]);
     }
+    
     public function renderEditForm($hero)
     {   
         $this->context->smarty->assign('hero_name', $hero['name']);
@@ -378,6 +391,7 @@ class HeroOfMonth extends Module
     
         return $helper->generateForm([$fields_form]);
     }
+    
     protected function renderHeroList()
     {
         $heroes = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'heroofmonth');
@@ -400,6 +414,7 @@ class HeroOfMonth extends Module
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
         return $helper->generateList($heroes, $fields_list);
     }
+    
     protected function renderLayoutSettingsForm()
     {
         $flag_image = Configuration::get('HERO_FLAG_IMAGE');
@@ -500,10 +515,12 @@ class HeroOfMonth extends Module
         ];
         return $helper->generateForm([$fields_form]);
     }
+    
     public function getHeroById($id_hero)
     {
         return Db::getInstance()->getRow('SELECT * FROM ' . _DB_PREFIX_ . 'heroofmonth WHERE id_hero = ' . (int) $id_hero);
     }
+    
     public function processEditHero()
     {
         $id_hero = (int) Tools::getValue('id_hero');
@@ -529,6 +546,7 @@ class HeroOfMonth extends Module
         }
         return $output . $this->renderEditForm($this->getHeroById($id_hero));
     }
+    
     public function ajaxProcessSearchProduct()
     {
         $search = Tools::getValue('search');
@@ -541,6 +559,7 @@ class HeroOfMonth extends Module
         $products = Db::getInstance()->executeS($sql);
         die(json_encode($products));
     }
+    
     protected function getSalesStats($product_id, $month, $year)
     {
         $sql = new DbQuery();
@@ -552,6 +571,7 @@ class HeroOfMonth extends Module
         $sql->where('YEAR(o.date_add) = ' . (int) $year);
         return Db::getInstance()->getRow($sql);
     }
+    
     protected function deleteHero($id_hero)
     {
         return Db::getInstance()->delete('heroofmonth', 'id_hero = ' . (int) $id_hero);
@@ -580,11 +600,13 @@ class HeroOfMonth extends Module
             $this->context->controller->errors[] = $this->l('Type de fichier non autorisé. Veuillez télécharger une image JPEG, PNG ou GIF.');
         }
     }
+    
     private function deactivatePreviousHero($month_year)
     {
         Db::getInstance()->execute("UPDATE `" . _DB_PREFIX_ . "heroofmonth` SET active = 0 WHERE month = '" . pSQL($month_year) . "'");
         Configuration::updateValue('HERO_OF_THE_MONTH', null);
     }
+    
     private function addNewHero($product_id, $description, $use_short_description, $month_year)
     {
         $product = new Product($product_id, false, $this->context->language->id);
@@ -593,6 +615,7 @@ class HeroOfMonth extends Module
         Db::getInstance()->execute($sql);
         Configuration::updateValue('HERO_OF_THE_MONTH', $product_id);
     }
+    
     private function updateHero($id_hero, $description, $use_short_description)
     {
         Db::getInstance()->update('heroofmonth', [
@@ -600,6 +623,7 @@ class HeroOfMonth extends Module
             'use_short_description' => (int) $use_short_description
         ], 'id_hero = ' . (int) $id_hero);
     }
+    
     private function handleFlagImageDeletion()
     {
         $flagImage = Configuration::get('HERO_FLAG_IMAGE');
@@ -611,6 +635,7 @@ class HeroOfMonth extends Module
         }
         return '';
     }
+    
     private function handleFlagImageUpload()
     {
         $file = $_FILES['HERO_FLAG_IMAGE'];
@@ -627,6 +652,7 @@ class HeroOfMonth extends Module
         }
         return $this->displayError($this->l('File type not allowed. Please upload a JPEG, PNG, or GIF image.'));
     }
+    
     private function handleLayoutSettingsSubmission()
     {
         Configuration::updateValue('HERO_COLOR1', Tools::getValue('color1'));
@@ -635,6 +661,7 @@ class HeroOfMonth extends Module
         Configuration::updateValue('HERO_LAYOUT_TYPE', Tools::getValue('layout_type', 'full'));
         return $this->displayConfirmation($this->l('Settings saved successfully.'));
     }
+    
     private function handleHeroOfMonthSubmission()
     {
         $productId = Tools::getValue('HERO_OF_THE_MONTH');
@@ -660,6 +687,7 @@ class HeroOfMonth extends Module
         }
         return $this->displayError($this->l('Error while adding the product.'));
     }
+    
     private function handleCustomImageUpload($idHero)
     {
         if (isset($_FILES['HERO_CUSTOM_IMAGE']) && !empty($_FILES['HERO_CUSTOM_IMAGE']['tmp_name'])) {
@@ -680,6 +708,7 @@ class HeroOfMonth extends Module
         }
         return '';
     }
+    
     private function handleHeroDeletion()
     {
         $idHero = (int) Tools::getValue('id_hero');
@@ -699,6 +728,7 @@ class HeroOfMonth extends Module
         }
         return $this->displayError($this->l('Hero not found.'));
     }
+    
     private function handleCustomImageDeletion()
     {
         $idHero = (int) Tools::getValue('id_hero');
