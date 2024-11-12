@@ -557,7 +557,7 @@ class HeroOfMonth extends Module
         $sql->where('(pl.name LIKE "%' . pSQL($search) . '%" OR p.id_product LIKE "' . pSQL($search) . '%" OR p.reference LIKE "%' . pSQL($search) . '%")');
         $sql->where('pl.id_lang = ' . (int) $this->context->language->id);
         $products = Db::getInstance()->executeS($sql);
-        die(json_encode($products));
+        exit(json_encode($products));
     }
     
     protected function getSalesStats($product_id, $month, $year)
