@@ -1,6 +1,6 @@
 
 <?php
-/**
+ /*
  * Copyright Mr-dev.
  *
  * NOTICE OF LICENSE
