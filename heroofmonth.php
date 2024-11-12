@@ -91,7 +91,7 @@ class HeroOfMonth extends Module
         );
         $this->context->controller->registerJavascript(
             'heroofmonth-js',
-            'modules/'.$this->name.'/views/js/heroofmonth.js',
+            'modules/'. $this->name. '/views/js/heroofmonth.js',
             ['priority' => 1000]
         );
     }
@@ -104,15 +104,15 @@ class HeroOfMonth extends Module
         }
         $product = new Product($heroProductId, true, $this->context->language->id);
         $cover = Product::getCover($heroProductId);
-        $product->id_image = $cover ? $product->id.'-'.$cover['id_image'] : null;
+        $product->id_image = $cover ? $product->id. '-' .$cover['id_image'] : null;
         $heroData = Db::getInstance()->getRow(
-            'SELECT * FROM '._DB_PREFIX_.'heroofmonth WHERE id_product = '.(int) $heroProductId
+            'SELECT * FROM '. _DB_PREFIX_ .'heroofmonth WHERE id_product = '. (int) $heroProductId
         );
         $useShortDescription = !empty($heroData['use_short_description']);
         $customDescription = $heroData['description'] ?? 'no';
         $customImage = $heroData['image'] ?? null;
         $customImageUrl = $customImage
-            ? $this->context->link->getBaseLink().'modules/'.$this->name.'/views/img/'.$customImage
+            ? $this->context->link->getBaseLink(). 'modules/'.$this->name. '/views/img/' .$customImage
             : null;
         $this->context->smarty->assign([
             'hero_product_id' => $heroProductId,
@@ -133,13 +133,13 @@ class HeroOfMonth extends Module
         if (empty($flagImage)) {
             return '';
         }
-        $flagImagePath = _PS_MODULE_DIR_.$this->name.'/views/img/'.$flagImage;
+        $flagImagePath = _PS_MODULE_DIR_. $this->name .'/views/img/'. $flagImage;
         if (
             isset($params['product']['id_product'])
             && $params['product']['id_product'] === $heroProductId
             && file_exists($flagImagePath)
         ) {
-            $flagImageUrl = $this->context->link->getBaseLink().'modules/'.$this->name.'/views/img/'.$flagImage;
+            $flagImageUrl = $this->context->link->getBaseLink().'modules/'. $this->name .'/views/img/'. $flagImage;
             $this->context->smarty->assign('flag_image_url', $flagImageUrl);
 
             return $this->display(__FILE__, 'views/templates/hook/heroofmonth_flag.tpl');
