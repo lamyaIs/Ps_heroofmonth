@@ -1,0 +1,30 @@
+name: PHP-CS-Fixer
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  phpcsfixer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'  # Choisis la version PHP que tu veux utiliser
+
+      - name: Install PHP-CS-Fixer
+        run: |
+          composer global require friendsofphp/php-cs-fixer
+
+      - name: Run PHP-CS-Fixer
+        run: |
+          php-cs-fixer fix --diff --dry-run
+        env:
+          PATH: ${{ runner.tool_cache }}/php/current/bin:~/.composer/vendor/bin:${{ env.PATH }}
