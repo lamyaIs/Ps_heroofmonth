@@ -1,0 +1,26 @@
+name: Install PHP
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  install_php_job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'  # Remplace par la version PHP requise (par exemple '7.4', '8.1', etc.)
+          tools: composer      # Installe également Composer si besoin
+
+      - name: Verify PHP installation
+        run: |
+          php -v
+          which php
