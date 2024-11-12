@@ -86,7 +86,7 @@ class HeroOfMonth extends Module
     {
         $this->context->controller->registerStylesheet(
             'heroofmonth-css',
-            'modules/'.$this->name.'/views/css/heroofmonth.css',
+            'modules/'. $this->name .'/views/css/heroofmonth.css',
             ['media' => 'all', 'priority' => 1000]
         );
         $this->context->controller->registerJavascript(
