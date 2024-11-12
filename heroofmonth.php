@@ -202,7 +202,7 @@ class HeroOfMonth extends Module
             $output .= $this->handleCustomImageDeletion();
         }
 
-        return $output.$this->renderForm().$this->renderHeroList();
+        return $output . $this->renderForm() . $this->renderHeroList();
     }
 
     protected function renderForm()
@@ -257,7 +257,7 @@ class HeroOfMonth extends Module
         $helper->name_controller = $this->name;
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitHeroOfMonth';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure='.$this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = [
             'fields_value' => [
@@ -343,11 +343,11 @@ class HeroOfMonth extends Module
         ];
 
         if (!empty($hero['image'])) {
-            $image_path = _PS_MODULE_DIR_ . $this->name.'/views/img/' . $hero['image'];
-            $image_url = $this->context->link->getBaseLink() . 'modules/'.$this->name.'/views/img/' . $hero['image'];
+            $image_path = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $hero['image'];
+            $image_url = $this->context->link->getBaseLink() . 'modules/' . $this->name . '/views/img/' . $hero['image'];
 
             if (file_exists($image_path)) {
-                $delete_image_url = $this->context->link->getAdminLink('AdminModules', true) . '&configure='.$this->name . '&delete_hero_image=1&id_hero=' . (int) $hero['id_hero'];
+                $delete_image_url = $this->context->link->getAdminLink('AdminModules', true) . '&configure=' . $this->name . '&delete_hero_image=1&id_hero=' . (int) $hero['id_hero'];
                 $delete_image_text = $this->l('Delete the image.');
 
                 $this->context->smarty->assign([
@@ -428,7 +428,7 @@ class HeroOfMonth extends Module
     {
         $flag_image = Configuration::get('HERO_FLAG_IMAGE');
         $image_path = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $flag_image;
-        $image_url = $this->context->link->getBaseLink() . 'modules/' . $this->name.'/views/img/' . $flag_image;
+        $image_url = $this->context->link->getBaseLink() . 'modules/' . $this->name . '/views/img/' . $flag_image;
         $inputs = [
             [
                 'type' => 'file',
@@ -553,7 +553,7 @@ class HeroOfMonth extends Module
             $output .= $this->displayError($this->l('Erreur lors de la mise à jour du produit héros.'));
         }
 
-        return $output.$this->renderEditForm($this->getHeroById($id_hero));
+        return $output . $this->renderEditForm($this->getHeroById($id_hero));
     }
 
     public function ajaxProcessSearchProduct()
@@ -575,9 +575,9 @@ class HeroOfMonth extends Module
         $sql->select('SUM(od.product_quantity) as total_quantity, SUM(od.total_price_tax_incl) as total_sales');
         $sql->from('order_detail', 'od');
         $sql->innerJoin('orders', 'o', 'od.id_order = o.id_order');
-        $sql->where('od.product_id = '.(int) $product_id);
-        $sql->where('MONTH(o.date_add) = '.(int) $month);
-        $sql->where('YEAR(o.date_add) = '.(int) $year);
+        $sql->where('od.product_id = ' . (int) $product_id);
+        $sql->where('MONTH(o.date_add) = ' . (int) $month);
+        $sql->where('YEAR(o.date_add) = ' . (int) $year);
 
         return Db::getInstance()->getRow($sql);
     }
@@ -599,7 +599,7 @@ class HeroOfMonth extends Module
         $allowed_mime_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (in_array($file['type'], $allowed_mime_types)) {
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = 'hero_' . (int)$id_hero . '.' . $extension;
+            $filename = 'hero_' . (int) $id_hero . '.' . $extension;
             $destination = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $filename;
             if (move_uploaded_file($file['tmp_name'], $destination)) {
                 Db::getInstance()->update('heroofmonth', ['image' => pSQL($filename)], 'id_hero = ' . (int) $id_hero);
@@ -621,7 +621,7 @@ class HeroOfMonth extends Module
     {
         $product = new Product($product_id, false, $this->context->language->id);
         $sql = 'INSERT INTO `' . _DB_PREFIX_ . "heroofmonth` (id_product, name, month, active, description, use_short_description) 
-            VALUES ('" . (int) $product_id . "', '" . pSQL($product->name) . "', '" . pSQL($month_year) . "', 1, '".pSQL($description)."', ".(int) $use_short_description.')';
+            VALUES ('" . (int) $product_id . "', '" . pSQL($product->name) . "', '" . pSQL($month_year) . "', 1, '" . pSQL($description) . "', " . (int) $use_short_description . ')';
         Db::getInstance()->execute($sql);
         Configuration::updateValue('HERO_OF_THE_MONTH', $product_id);
     }
@@ -631,13 +631,13 @@ class HeroOfMonth extends Module
         Db::getInstance()->update('heroofmonth', [
             'description' => pSQL($description),
             'use_short_description' => (int) $use_short_description,
-        ], 'id_hero = '.(int) $id_hero);
+        ], 'id_hero = ' . (int) $id_hero);
     }
 
     private function handleFlagImageDeletion()
     {
         $flagImage = Configuration::get('HERO_FLAG_IMAGE');
-        $imagePath = _PS_MODULE_DIR_.$this->name.'/views/img/'.$flagImage;
+        $imagePath = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $flagImage;
         if (file_exists($imagePath)) {
             unlink($imagePath);
             Configuration::deleteByName('HERO_FLAG_IMAGE');
@@ -654,8 +654,8 @@ class HeroOfMonth extends Module
         $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
         if (in_array($file['type'], $allowedMimeTypes)) {
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = 'flag_image.'.$extension;
-            $destination = _PS_MODULE_DIR_.$this->name.'/views/img/'.$filename;
+            $filename = 'flag_image.' . $extension;
+            $destination = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $filename;
             if (move_uploaded_file($file['tmp_name'], $destination)) {
                 Configuration::updateValue('HERO_FLAG_IMAGE', $filename);
 
@@ -686,16 +686,16 @@ class HeroOfMonth extends Module
         }
         $month = date('m');
         $year = date('Y');
-        $monthYear = $month.'/'.$year;
+        $monthYear = $month . '/' . $year;
         $customDescription = Tools::getValue('hero_custom_description');
         $useShortDescription = Tools::getValue('switch_description_short');
-        $existingHero = Db::getInstance()->getRow('SELECT id_hero FROM '._DB_PREFIX_.'heroofmonth WHERE month = "'.pSQL($monthYear).'" AND active = 1');
+        $existingHero = Db::getInstance()->getRow('SELECT id_hero FROM ' . _DB_PREFIX_ . 'heroofmonth WHERE month = "' . pSQL($monthYear) . '" AND active = 1');
         if ($existingHero) {
             return $this->displayError($this->l('A product is already associated with this month. Please edit the existing product.'));
         }
         $product = new Product($productId, false, $this->context->language->id);
-        $sql = 'INSERT INTO `'._DB_PREFIX_."heroofmonth` (id_product, name, month, active, description, use_short_description)
-            VALUES ('".(int) $productId."', '".pSQL($product->name)."', '".pSQL($monthYear)."', 1, '".pSQL($customDescription)."', ".(int) $useShortDescription.')';
+        $sql = 'INSERT INTO `' . _DB_PREFIX_ . "heroofmonth` (id_product, name, month, active, description, use_short_description)
+            VALUES ('" . (int) $productId . "', '" . pSQL($product->name) . "', '" . pSQL($monthYear) . "', 1, '" . pSQL($customDescription) . "', " . (int) $useShortDescription . ')';
         Configuration::updateValue('HERO_OF_THE_MONTH', $productId);
         if (Db::getInstance()->execute($sql)) {
             $idHero = Db::getInstance()->Insert_ID();
@@ -713,10 +713,10 @@ class HeroOfMonth extends Module
             $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
             if (in_array($file['type'], $allowedMimeTypes)) {
                 $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $filename = 'hero_'.(int) $idHero.'.'.$extension;
-                $destination = _PS_MODULE_DIR_.$this->name.'/views/img/'.$filename;
+                $filename = 'hero_' . (int) $idHero . '.' . $extension;
+                $destination = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $filename;
                 if (move_uploaded_file($file['tmp_name'], $destination)) {
-                    Db::getInstance()->update('heroofmonth', ['image' => pSQL($filename)], 'id_hero = '.(int) $idHero);
+                    Db::getInstance()->update('heroofmonth', ['image' => pSQL($filename)], 'id_hero = ' . (int) $idHero);
                     Configuration::updateValue('HERO_CUSTOM_IMAGE', $filename);
 
                     return $this->displayConfirmation($this->l('Custom image uploaded successfully.'));
@@ -734,7 +734,7 @@ class HeroOfMonth extends Module
     private function handleHeroDeletion()
     {
         $idHero = (int) Tools::getValue('id_hero');
-        $hero = Db::getInstance()->getRow('SELECT month FROM '._DB_PREFIX_.'heroofmonth WHERE id_hero = '.(int) $idHero);
+        $hero = Db::getInstance()->getRow('SELECT month FROM ' . _DB_PREFIX_ . 'heroofmonth WHERE id_hero = ' . (int) $idHero);
         if ($hero) {
             $heroMonthYear = explode('/', $hero['month']);
             $heroMonth = (int) $heroMonthYear[0];
@@ -758,9 +758,9 @@ class HeroOfMonth extends Module
         $idHero = (int) Tools::getValue('id_hero');
         $hero = $this->getHeroById($idHero);
         if ($hero && !empty($hero['image'])) {
-            $imagePath = _PS_MODULE_DIR_.$this->name.'/views/img/'.$hero['image'];
+            $imagePath = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $hero['image'];
             if (file_exists($imagePath) && unlink($imagePath)) {
-                Db::getInstance()->update('heroofmonth', ['image' => ''], 'id_hero = '.(int) $idHero);
+                Db::getInstance()->update('heroofmonth', ['image' => ''], 'id_hero = ' . (int) $idHero);
 
                 return $this->displayConfirmation($this->l('The image has been successfully deleted.'));
             }
