@@ -1,0 +1,12 @@
+# Prevent directory listing
+Options -Indexes
+
+# Deny access to all .tpl and .php files
+<FilesMatch "\.(tpl|php)$">
+    Deny from all
+</FilesMatch>
+
+# Allow access to index.php if needed
+<Files "index.php">
+    Allow from all
+</Files>
