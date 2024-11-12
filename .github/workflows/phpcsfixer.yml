@@ -17,11 +17,23 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0'  # Choisis la version PHP que tu veux utiliser
+          php-version: '8.0'  # ou spécifie la version PHP requise
+
+      - name: Verify PHP installation
+        run: |
+          php -v
+          which php
 
       - name: Install PHP-CS-Fixer
         run: |
           composer global require friendsofphp/php-cs-fixer
+
+      - name: Verify PHP-CS-Fixer installation
+        run: |
+          php-cs-fixer --version
+          which php-cs-fixer
+        env:
+          PATH: ${{ runner.tool_cache }}/php/current/bin:~/.composer/vendor/bin:${{ env.PATH }}
 
       - name: Run PHP-CS-Fixer
         run: |
