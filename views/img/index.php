@@ -1,12 +1,14 @@
+
 <?php
 /**
- * Copyright Mr-dev
+ * Copyright Mr-dev.
  *
  * NOTICE OF LICENSE
  *
  * This file is proprietary and each license is valid for use on one website only.
  * To use this file on additional websites or projects, additional licenses must be purchased.
- * Redistribution, reselling, leasing, licensing, sub-licensing, or offering this resource to any third party is strictly prohibited.
+ * Redistribution, reselling, leasing, licensing, sub-licensing,
+ * or offering this resource to any third party is strictly prohibited.
  *
  * DISCLAIMER
  *
