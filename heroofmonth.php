@@ -590,7 +590,7 @@ class HeroOfMonth extends Module
     private function handleImageUpload($id_hero, $existing_image)
     {
         if (!empty($existing_image)) {
-            $existing_image_path = _PS_MODULE_DIR_ . $this->name.'/views/img/' . $existing_image;
+            $existing_image_path = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $existing_image;
             if (file_exists($existing_image_path)) {
                 unlink($existing_image_path);
             }
