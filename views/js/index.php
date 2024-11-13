@@ -1,6 +1,6 @@
 
 <?php
-/**
+/*
  * Copyright Mr-dev.
  *
  * NOTICE OF LICENSE
@@ -18,6 +18,7 @@
  * @copyright  Mr-dev
  * @license    License valid for one website (or project) per purchase
  */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -29,3 +30,4 @@ header('Cache-Control: post-check=0, pre-check=0', false);
 header('Pragma: no-cache');
 header('Location: ../');
 exit;
+
