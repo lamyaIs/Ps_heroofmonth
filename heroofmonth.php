@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Copyright Mr-dev.
@@ -52,15 +51,14 @@ class HeroOfMonth extends Module
     {
         return parent::uninstall()
             && $this->deleteConfigurations()
-            && $this->deleteTable()
-            && $this->removeTab();
+            && $this->deleteTable();
     }
 
     private function initializeConfigurations()
     {
-        Configuration::updateValue('HERO_COLOR1', '#000000');
-        Configuration::updateValue('HERO_COLOR2', '#FFFFFF');
-        Configuration::updateValue('HERO_COLOR3', '#FF0000');
+        Configuration::updateValue('HERO_COLOR1', '');
+        Configuration::updateValue('HERO_COLOR2', '');
+        Configuration::updateValue('HERO_COLOR3', '');
         Configuration::updateValue('HERO_LAYOUT_TYPE', 'full');
         Configuration::updateValue('HERO_FLAG_IMAGE', 'flag_image.png');
         Configuration::updateValue('HERO_OF_THE_MONTH', null);
@@ -121,6 +119,7 @@ class HeroOfMonth extends Module
             'use_short_description' => $useShortDescription,
             'custom_description' => $customDescription,
             'hero_custom_image' => $customImageUrl,
+            'is_custom_image_empty' => empty($customImageUrl),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/display_home.tpl');
@@ -135,8 +134,7 @@ class HeroOfMonth extends Module
         }
         $flagImagePath = _PS_MODULE_DIR_ . $this->name . '/views/img/' . $flagImage;
         if (
-            isset($params['product']['id_product'])
-            && $params['product']['id_product'] === $heroProductId
+            $params['product']['id_product'] == $heroProductId
             && file_exists($flagImagePath)
         ) {
             $flagImageUrl = $this->context->link->getBaseLink() . 'modules/' . $this->name . '/views/img/' . $flagImage;
@@ -165,6 +163,12 @@ class HeroOfMonth extends Module
         return Db::getInstance()->execute($sql);
     }
 
+    private function deleteTable()
+    {
+        $sql = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'heroofmonth`;';
+        return Db::getInstance()->execute($sql);
+    }
+
     public function getContent()
     {
         $output = '';
@@ -176,6 +180,9 @@ class HeroOfMonth extends Module
         }
         $this->context->controller->addJS($this->_path . 'views/js/heroofmonth.js');
         $this->context->controller->addCSS($this->_path . 'views/css/heroofmonth.css');
+        Media::addJsDef([
+            'ajaxUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=' . $this->name . '&ajax=1&action=searchProduct'
+        ]);
         $output .= '<a href="' . $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&action=layoutSettings&token=' . Tools::getAdminTokenLite('AdminModules') . '" class="btn btn-primary" style="margin-bottom: 20px;">' . $this->l('Configuration du produit du mois') . '</a>';
         if ('layoutSettings' === Tools::getValue('action')) {
             return $this->renderLayoutSettingsForm();
@@ -211,42 +218,42 @@ class HeroOfMonth extends Module
         $fields_form = [
             'form' => [
                 'legend' => [
-                    'title' => $this->l('Ajouter un produit'),
+                    'title' => $this->l('Add a product'),
                     'icon' => 'icon-cogs',
                 ],
                 'input' => [
                     [
                         'type' => 'html',
-                        'label' => $this->l('Recherche Produit (ID, Nom, Référence)'),
+                        'label' => $this->l('Product search (ID, Name, Reference)'),
                         'name' => 'product_search_html',
                         'html_content' => $this->context->smarty->fetch($this->local_path . 'views/templates/admin/product_search.tpl'),
                     ],
                     ['type' => 'hidden', 'name' => 'HERO_OF_THE_MONTH', 'id' => 'HERO_OF_THE_MONTH'],
                     [
                         'type' => 'switch',
-                        'label' => $this->l('Utiliser la description courte du produit'),
+                        'label' => $this->l('Use the short product description'),
                         'name' => 'switch_description_short',
-                        'desc' => $this->l('Activez pour utiliser la description courte du produit au lieu de la description personnalisée.'),
+                        'desc' => $this->l('Enable to use the short product description instead of the custom description.'),
                         'values' => [
-                            ['id' => 'active_on', 'value' => 1, 'label' => $this->l('Oui')],
-                            ['id' => 'active_off', 'value' => 0, 'label' => $this->l('Non')],
+                            ['id' => 'active_on', 'value' => 1, 'label' => $this->l('Yes')],
+                            ['id' => 'active_off', 'value' => 0, 'label' => $this->l('No')],
                         ],
                         'value' => $use_short_description,
                     ],
                     [
                         'type' => 'textarea',
-                        'label' => $this->l('Description personnalisée'),
+                        'label' => $this->l('Customized description'),
                         'name' => 'hero_custom_description',
-                        'desc' => $this->l('Ajoutez une description personnalisée pour ce produit.'),
+                        'desc' => $this->l('Add a custom description for this product.'),
                         'rows' => 10,
                         'cols' => 50,
                         'autoload_rte' => true,
                     ],
                     [
                         'type' => 'file',
-                        'label' => $this->l('Image personnalisée pour le produit'),
+                        'label' => $this->l('Customized product image'),
                         'name' => 'HERO_CUSTOM_IMAGE',
-                        'desc' => $this->l('Téléchargez une image pour ce produit.'),
+                        'desc' => $this->l('Download an image for this product.'),
                     ],
                 ],
                 'submit' => ['title' => $this->l('Save'), 'class' => 'btn btn-default pull-right'],
@@ -279,13 +286,13 @@ class HeroOfMonth extends Module
         $fields_form = [
             'form' => [
                 'legend' => [
-                    'title' => $this->l('Modifier le produit héros'),
+                    'title' => $this->l('Modify the hero product'),
                     'icon' => 'icon-cogs',
                 ],
                 'input' => [
                     [
                         'type' => 'html',
-                        'label' => $this->l('Recherche Produit (ID, Nom, Référence)'),
+                        'label' => $this->l('Product search (ID, Name, Reference)'),
                         'name' => 'product_search_html',
                         'html_content' => $html_content,
                     ],
@@ -302,9 +309,9 @@ class HeroOfMonth extends Module
                     ],
                     [
                         'type' => 'textarea',
-                        'label' => $this->l('Description personnalisée'),
+                        'label' => $this->l('Customized description'),
                         'name' => 'hero_custom_description',
-                        'desc' => $this->l('Ajoutez une description personnalisée pour ce produit.'),
+                        'desc' => $this->l('Add a custom description for this product.'),
                         'rows' => 10,
                         'cols' => 50,
                         'autoload_rte' => true,
@@ -314,19 +321,19 @@ class HeroOfMonth extends Module
                     ],
                     [
                         'type' => 'switch',
-                        'label' => $this->l('Utiliser la description courte du produit'),
+                        'label' => $this->l('Use the short product description.'),
                         'name' => 'switch_description_short',
-                        'desc' => $this->l('Activez pour utiliser la description courte du produit au lieu de la description personnalisée.'),
+                        'desc' => $this->l('Enable to use the short product description instead of the custom description.'),
                         'values' => [
                             [
                                 'id' => 'active_on',
                                 'value' => 1,
-                                'label' => $this->l('Oui'),
+                                'label' => $this->l('Yes'),
                             ],
                             [
                                 'id' => 'active_off',
                                 'value' => 0,
-                                'label' => $this->l('Non'),
+                                'label' => $this->l('No'),
                             ],
                         ],
                         'value' => (int) $hero['use_short_description'],
@@ -334,9 +341,9 @@ class HeroOfMonth extends Module
                     ],
                     [
                         'type' => 'file',
-                        'label' => $this->l('Modifier l\'image du produit héros'),
+                        'label' => $this->l('Change the image of the hero product'),
                         'name' => 'HERO_CUSTOM_IMAGE',
-                        'desc' => $this->l('Téléchargez une nouvelle image pour ce produit.'),
+                        'desc' => $this->l('Download a new image for this product.'),
                     ],
                 ],
             ],
@@ -374,7 +381,7 @@ class HeroOfMonth extends Module
             ],
             [
                 'type' => 'submit',
-                'title' => $this->l('Sauvegarder'),
+                'title' => $this->l('Save'),
                 'class' => 'btn btn-default pull-right',
             ],
         ];
@@ -416,7 +423,7 @@ class HeroOfMonth extends Module
         $helper->actions = ['edit', 'delete', 'view'];
         $helper->identifier = 'id_hero';
         $helper->show_toolbar = true;
-        $helper->title = $this->l('Produits Héros du Mois');
+        $helper->title = $this->l('Products Heroes of the Month');
         $helper->table = $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
@@ -432,40 +439,40 @@ class HeroOfMonth extends Module
         $inputs = [
             [
                 'type' => 'file',
-                'label' => $this->l('Image du flag pour le produit du mois'),
+                'label' => $this->l('Flag image for product of the month'),
                 'name' => 'HERO_FLAG_IMAGE',
-                'desc' => $this->l('Choisissez une image pour le flag du produit du mois.'),
+                'desc' => $this->l('Choose an image for the product of the month flag.'),
             ],
             [
                 'type' => 'color',
-                'label' => $this->l('Couleur de fond (background color)'),
+                'label' => $this->l('Background color'),
                 'name' => 'color1',
             ],
             [
                 'type' => 'color',
-                'label' => $this->l('Couleur de l\'entête (header color)'),
+                'label' => $this->l('Header color'),
                 'name' => 'color2',
             ],
             [
                 'type' => 'color',
-                'label' => $this->l('Couleur du texte (text color)'),
+                'label' => $this->l('Text color'),
                 'name' => 'color3',
             ],
             [
                 'type' => 'radio',
-                'label' => $this->l('Disposition'),
+                'label' => $this->l('Layout'),
                 'name' => 'layout_type',
                 'values' => [
-                    ['id' => 'full_width', 'value' => 'full', 'label' => $this->l('Pleine largeur (full-width)')],
-                    ['id' => 'boxed', 'value' => 'boxed', 'label' => $this->l('Encadré (boxed)')],
+                    ['id' => 'full_width', 'value' => 'full', 'label' => $this->l('Full-width')],
+                    ['id' => 'boxed', 'value' => 'boxed', 'label' => $this->l('Boxed')],
                 ],
-                'desc' => $this->l('Choisissez entre une mise en page pleine largeur ou encadrée.'),
+                'desc' => $this->l('Choose between a full-width or framed layout.'),
             ],
         ];
         if (!empty($flag_image) && file_exists($image_path)) {
             $flag_image_url = $this->context->link->getBaseLink() . 'modules/' . $this->name . '/views/img/' . $flag_image;
             $delete_flag_image_url = $this->context->link->getAdminLink('AdminModules', true) . '&delete_flag_image=1&configure=' . $this->name;
-            $delete_flag_image_text = $this->l('Supprimer l\'image');
+            $delete_flag_image_text = $this->l('Delete image');
 
             $this->context->smarty->assign([
                 'flag_image_url' => $flag_image_url,
@@ -484,20 +491,20 @@ class HeroOfMonth extends Module
         $fields_form = [
             'form' => [
                 'legend' => [
-                    'title' => $this->l('Configuration du produit du mois'),
+                    'title' => $this->l('Product of the month configuration'),
                     'icon' => 'icon-cogs',
                 ],
                 'input' => $inputs,
                 'buttons' => [
                     [
                         'type' => 'button',
-                        'title' => $this->l('Retour'),
+                        'title' => $this->l('Back'),
                         'class' => 'btn btn-secondary',
                         'href' => $this->context->link->getAdminLink('AdminModules') . '&configure=' . $this->name,
                     ],
                     [
                         'type' => 'submit',
-                        'title' => $this->l('Sauvegarder'),
+                        'title' => $this->l('Save'),
                         'class' => 'btn btn-default pull-right',
                     ],
                 ],
@@ -548,9 +555,9 @@ class HeroOfMonth extends Module
             } else {
                 $this->updateHero($id_hero, $custom_description, $use_short_description);
             }
-            $output .= $this->displayConfirmation($this->l('Produit héros mis à jour avec succès.'));
+            $output .= $this->displayConfirmation($this->l('Hero product successfully updated.'));
         } else {
-            $output .= $this->displayError($this->l('Erreur lors de la mise à jour du produit héros.'));
+            $output .= $this->displayError($this->l('Error updating hero product.'));
         }
 
         return $output . $this->renderEditForm($this->getHeroById($id_hero));
@@ -604,17 +611,16 @@ class HeroOfMonth extends Module
             if (move_uploaded_file($file['tmp_name'], $destination)) {
                 Db::getInstance()->update('heroofmonth', ['image' => pSQL($filename)], 'id_hero = ' . (int) $id_hero);
             } else {
-                $this->context->controller->errors[] = $this->l('Erreur lors du téléchargement de l\'image.');
+                $this->context->controller->errors[] = $this->l('Error downloading image.');
             }
         } else {
-            $this->context->controller->errors[] = $this->l('Type de fichier non autorisé. Veuillez télécharger une image JPEG, PNG ou GIF.');
+            $this->context->controller->errors[] = $this->l('Unauthorized file type. Please upload a JPEG, PNG or GIF image.');
         }
     }
 
     private function deactivatePreviousHero($month_year)
     {
         Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . "heroofmonth` SET active = 0 WHERE month = '" . pSQL($month_year) . "'");
-        Configuration::updateValue('HERO_OF_THE_MONTH', null);
     }
 
     private function addNewHero($product_id, $description, $use_short_description, $month_year)
@@ -769,5 +775,46 @@ class HeroOfMonth extends Module
         }
 
         return $this->displayError($this->l('The image was not found or does not exist.'));
+    }
+    
+    protected function renderHeroStatistics()
+    {
+        $id_hero = (int) Tools::getValue('id_hero');
+        $hero = Db::getInstance()->getRow('SELECT * FROM '._DB_PREFIX_.'heroofmonth WHERE id_hero = '.$id_hero);
+
+        if ($hero) {
+            $product_id = (int) $hero['id_product'];
+            $month_year = $hero['month'];
+            list($month, $year) = explode('/', $month_year);
+
+            $hero_product = new Product($product_id, true, $this->context->language->id);
+
+            if (Validate::isLoadedObject($hero_product)) {
+                $sales_stats = $this->getSalesStats($product_id, (int) $month, (int) $year);
+
+                $admin_token = Tools::getAdminTokenLite('AdminProducts');
+                $admin_product_link = $this->context->link->getAdminLink('AdminProducts').'&sell/catalog/products-v2/'.$hero_product->id.'/edit?_token='.$admin_token;
+
+                $this->context->smarty->assign([
+                    'total_quantity_sold' => (int) $sales_stats['total_quantity'],
+                    'total_sales' => (float) $sales_stats['total_sales'],
+                    'hero_product' => $hero_product,
+                    'product_id' => $product_id,
+                    'month' => $month,
+                    'year' => $year,
+                    'link' => $this->context->link,
+                    'admin_product_link' => $admin_product_link,
+                    'back_link' => $this->context->link->getAdminLink('AdminModules').'&configure='.$this->name,
+                ]);
+
+                return $this->display(__FILE__, 'views/templates/admin/heroofmonth_stats.tpl');
+            } else {
+                $this->context->controller->errors[] = $this->l('Invalid product.');
+            }
+        } else {
+            $this->context->controller->errors[] = $this->l('Hero record not found.');
+        }
+
+        return '';
     }
 }
