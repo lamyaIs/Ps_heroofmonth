@@ -411,11 +411,11 @@ class HeroOfMonth extends Module
     {
         $heroes = Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'heroofmonth');
         $fields_list = [
-            'id_hero' => ['title' => $this->l('ID'), 'align' => 'center', 'class' => 'fixed-width-xs'],
-            'id_product' => ['title' => $this->l('ID Produit'), 'align' => 'center', 'class' => 'fixed-width-xs'],
-            'name' => ['title' => $this->l('Nom')],
-            'month' => ['title' => $this->l('Mois'), 'align' => 'center'],
-            'active' => ['title' => $this->l('Actif'), 'align' => 'center', 'type' => 'bool', 'active' => 'status'],
+            'id_hero' => ['title' => $this->l('ID'), 'align' => 'center', 'class' => 'fixed-width-xs', 'filter' => false],
+            'id_product' => ['title' => $this->l('ID Produit'), 'align' => 'center', 'class' => 'fixed-width-xs', 'filter' => false],
+            'name' => ['title' => $this->l('Nom'), 'filter' => false],
+            'month' => ['title' => $this->l('Mois'), 'align' => 'center', 'filter' => false],
+            'active' => ['title' => $this->l('Actif'), 'align' => 'center', 'type' => 'bool', 'active' => 'status', 'filter' => false],
         ];
         $helper = new HelperList();
         $helper->shopLinkType = '';
