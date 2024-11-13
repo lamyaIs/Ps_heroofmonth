@@ -19,6 +19,6 @@
 *}
 
 {if $flag_image_url}
-    <img src="{$flag_image_url|escape:'url':'UTF-8'}" width="48" height="48" alt="Produit du Mois" class="product-flag heroofmonth">
+    <img src="{$flag_image_url|escape:'html':'UTF-8'}" width="48" height="48" alt="Produit du Mois" class="product-flag heroofmonth">
 {/if}
 
