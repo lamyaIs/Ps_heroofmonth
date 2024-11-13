@@ -25,16 +25,7 @@ prohibited.
       {$hero_product->id|escape:'html':'UTF-8'}) for {$month|escape:'html':'UTF-8'}/{$year|escape:'html':'UTF-8'}
     </h2>
   </div>
-  
-  <div class="hero-product-description">
-    <h3>Description:</h3>
-    <p>{$product_description|escape:'html':'UTF-8'}</p>
-  </div>
 
-  <div class="hero-product-image">
-    <img src="{$product_image|escape:'url':'UTF-8'}" alt="{$hero_product->name|escape:'html':'UTF-8'}"
-      class="img-fluid" />
-  </div>
   <div class="hero-stats-content">
     <div class="stat-item">
       <label>Total Quantity Sold:</label>
@@ -42,7 +33,7 @@ prohibited.
     </div>
     <div class="stat-item">
       <label>Total Sales (Including Tax):</label>
-      <span>{$total_sales|escape:'html':'UTF-8'} {$currency.iso_code|escape:'html':'UTF-8'}</span>
+      <span>{$total_sales|escape:'html':'UTF-8'}</span>
     </div>
     <div class="stat-item">
       <label>Average Price per Unit (Including Tax):</label>
@@ -52,7 +43,6 @@ prohibited.
         total_sales=$total_sales
         total_quantity_sold=$total_quantity_sold
         format="%.2f"}
-        {$currency.iso_code|escape:'html':'UTF-8'}
       </span>
       {else}
       <span>N/A</span>
@@ -63,15 +53,17 @@ prohibited.
       <span>{$month|escape:'html':'UTF-8'}/{$year|escape:'html':'UTF-8'}</span>
     </div>
   </div>
-  <div class="hero-product-link">
-    <a href="{$link->getProductLink($hero_product->id, $hero_product->link_rewrite)|escape:'url':'UTF-8'}"
-      class="product-link-btn" target="_blank">
-      View Product Page
-    </a>
-  </div>
-  <div class="hero-actions">
-    <a href="{$back_link|escape:'url':'UTF-8'}" class="hero-back-btn">
-      <i class="icon-arrow-left"></i> Back to Configuration
-    </a>
+  <div class="hero-product-actions">
+    <div class="hero-product-link">
+      <a href="{$link->getProductLink($hero_product->id, $hero_product->link_rewrite)|escape:'html':'UTF-8'}"
+        class="product-link-btn" target="_blank">
+        View Product Page
+      </a>
+    </div>
+    <div class="hero-actions">
+      <a href="{$back_link|escape:'html':'UTF-8'}" class="product-link-btn">
+        <i class="icon-arrow-left"></i> Back to Configuration
+      </a>
+    </div>
   </div>
 </div>
