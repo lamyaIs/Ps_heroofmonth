@@ -181,7 +181,7 @@ class HeroOfMonth extends Module
         $this->context->controller->addJS($this->_path . 'views/js/heroofmonth.js');
         $this->context->controller->addCSS($this->_path . 'views/css/heroofmonth.css');
         Media::addJsDef([
-            'ajaxUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=' . $this->name . '&ajax=1&action=searchProduct'
+            'ajaxUrl' => $this->context->link->getAdminLink('AdminModules', true) . ' & configure=' . $this->name . ' & ajax=1 & action=searchProduct',
         ]);
         $output .= '<a href="' . $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&action=layoutSettings&token=' . Tools::getAdminTokenLite('AdminModules') . '" class="btn btn-primary" style="margin-bottom: 20px;">' . $this->l('Configuration du produit du mois') . '</a>';
         if ('layoutSettings' === Tools::getValue('action')) {
