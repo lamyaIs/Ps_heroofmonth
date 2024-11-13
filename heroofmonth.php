@@ -780,7 +780,7 @@ class HeroOfMonth extends Module
     protected function renderHeroStatistics()
     {
         $id_hero = (int) Tools::getValue('id_hero');
-        $hero = Db::getInstance()->getRow('SELECT * FROM '._DB_PREFIX_.'heroofmonth WHERE id_hero = '.$id_hero);
+        $hero = Db::getInstance()->getRow('SELECT * FROM ' . _DB_PREFIX_ . 'heroofmonth WHERE id_hero = ' . $id_hero);
 
         if ($hero) {
             $product_id = (int) $hero['id_product'];
