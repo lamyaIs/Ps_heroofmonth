@@ -804,7 +804,7 @@ class HeroOfMonth extends Module
                     'year' => $year,
                     'link' => $this->context->link,
                     'admin_product_link' => $admin_product_link,
-                    'back_link' => $this->context->link->getAdminLink('AdminModules').'&configure='.$this->name,
+                    'back_link' => $this->context->link->getAdminLink('AdminModules') . '&configure=' . $this->name,
                 ]);
 
                 return $this->display(__FILE__, 'views/templates/admin/heroofmonth_stats.tpl');
