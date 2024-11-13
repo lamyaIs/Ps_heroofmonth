@@ -18,7 +18,7 @@
  */
 *}
 {if $image_url}
-    <img src="{$image_url|escape:'url':'UTF-8'}" width="100" height="100" alt="Hero Image" />
+    <img src="{$image_url|escape:'html':'UTF-8'}" width="100" height="100" alt="Hero Image" />
     <br>
-    <a href="{$delete_image_url|escape:'url':'UTF-8'}" class="btn btn-danger">{$delete_image_text|escape:'html':'UTF-8'}</a>
+    <a href="{$delete_image_url|escape:'html':'UTF-8'}" class="btn btn-danger">{$delete_image_text|escape:'html':'UTF-8'}</a>
 {/if}
