@@ -776,7 +776,7 @@ class HeroOfMonth extends Module
 
         return $this->displayError($this->l('The image was not found or does not exist.'));
     }
-    
+
     protected function renderHeroStatistics()
     {
         $id_hero = (int) Tools::getValue('id_hero');
