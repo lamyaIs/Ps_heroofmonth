@@ -1,6 +1,5 @@
-
 <?php
-/**
+/*
  * Copyright Mr-dev.
  *
  * NOTICE OF LICENSE
@@ -18,6 +17,7 @@
  * @copyright  Mr-dev
  * @license    License valid for one website (or project) per purchase
  */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
