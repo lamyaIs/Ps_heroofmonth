@@ -793,7 +793,7 @@ class HeroOfMonth extends Module
                 $sales_stats = $this->getSalesStats($product_id, (int) $month, (int) $year);
 
                 $admin_token = Tools::getAdminTokenLite('AdminProducts');
-                $admin_product_link = $this->context->link->getAdminLink('AdminProducts') . '&sell/catalog/products-v2/'.$hero_product->id . '/edit?_token=' . $admin_token;
+                $admin_product_link = $this->context->link->getAdminLink('AdminProducts') . '&sell/catalog/products-v2/' . $hero_product->id . '/edit?_token=' . $admin_token;
 
                 $this->context->smarty->assign([
                     'total_quantity_sold' => (int) $sales_stats['total_quantity'],
