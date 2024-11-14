@@ -26,7 +26,7 @@ class HeroOfMonth extends Module
     {
         $this->name = 'heroofmonth';
         $this->tab = 'front_office_features';
-        $this->module_key = 'c1614c239af92968e5fae97f366e9961';
+        $this->module_key = '1e21658d893412fdc659137f2147bfe4';
         $this->version = '1.1.9';
         $this->author = 'Mr-dev';
         $this->need_instance = 0;
