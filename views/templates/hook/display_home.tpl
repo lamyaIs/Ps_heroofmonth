@@ -26,7 +26,11 @@
         
         <div class="hero-content-left" style="background-color: {$color2|escape:'html':'UTF-8'};">
             <p class="hero-quote" style="color: {$color3|escape:'html':'UTF-8'};">
-                « {$custom_description|escape:'html':'UTF-8'} »
+                {if $use_short_description == 1}
+                    « {$hero_product->description_short|strip_tags|escape:'html':'UTF-8'} »
+                {else}
+                    « {$custom_description|escape:'html':'UTF-8'} »
+                {/if}
             </p>
             <p class="hero-author" style="color: {$color3|escape:'html':'UTF-8'}; text-align: right;">- {$hero_product->manufacturer_name|escape:'html':'UTF-8'}</p>
             <a href="{$link->getProductLink($hero_product)|escape:'html':'UTF-8'}" class="btn btn-primary hero-button">View this product</a>
