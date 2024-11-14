@@ -365,7 +365,7 @@ class HeroOfMonth extends Module
 
                 $fields_form['form']['input'][] = [
                     'type' => 'html',
-                    'label' => $this->l('Image actuelle'),
+                    'label' => $this->l('Current image'),
                     'name' => 'current_image',
                     'html_content' => $this->context->smarty->fetch($this->local_path . 'views/templates/admin/current_image.tpl'),
                 ];
